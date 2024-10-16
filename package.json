@@ -1,0 +1,37 @@
+{
+  "name": "ma3-lua-api",
+  "displayName": "Ma3 Lua Api",
+  "description": "Lua extension for Grand Ma 3 Api",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.50.0"
+  },
+  "categories": [
+    "Programming Languages"
+  ],
+  "activationEvents": [
+    "*"
+  ],
+  "main": "./src/extension.js",
+  "contributes": {
+    "snippets": [
+      {
+        "language": "lua",
+        "path": "./snippets/lua.json"
+      }
+    ],
+    "configurationDefaults": {
+      "[lua]": {
+        "Lua.workspace.library": [
+          "${workspaceFolder}/globals.lua"
+        ],
+        "Lua.diagnostics.globals": [
+          "SetProgressRange",
+          "StartProgress"
+        ]
+      }
+    }
+  },
+  "extensionDependencies": [
+  ]
+}

@@ -1,0 +1,13 @@
+Text to Markdown: https://euangoddard.github.io/clipboard2markdown/
+Text to Json": https://toolsaday.com/text-tools/json-stringify
+
+Paste this in lua.json and replace function fields to add new method definition:
+
+,
+    "name": {
+        "prefix": "name",
+        "body": [
+        "body"
+        ],
+        "description": description
+    }
