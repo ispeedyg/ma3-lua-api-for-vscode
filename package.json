@@ -2,36 +2,35 @@
   "name": "ma3-lua-api",
   "displayName": "Ma3 Lua Api",
   "description": "Lua extension for Grand Ma 3 Api",
-  "version": "0.0.1",
+  "version": "0.1.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/JeremyDufeux/ma3-lua-api.git"
+  },
+  
   "engines": {
-    "vscode": "^1.50.0"
+    "vscode": "^1.96.0"
   },
   "categories": [
     "Programming Languages"
   ],
   "activationEvents": [
-    "*"
+    "onLanguage:lua"
   ],
+  
   "main": "./src/extension.js",
-  "contributes": {
-    "snippets": [
-      {
-        "language": "lua",
-        "path": "./snippets/lua.json"
-      }
-    ],
-    "configurationDefaults": {
-      "[lua]": {
-        "Lua.workspace.library": [
-          "${workspaceFolder}/globals.lua"
-        ],
-        "Lua.diagnostics.globals": [
-          "SetProgressRange",
-          "StartProgress"
-        ]
-      }
-    }
-  },
+  "files": [
+    "resources/ma3_documented_api.lua"
+  ],
   "extensionDependencies": [
-  ]
+    "sumneko.lua"
+  ],
+  "devDependencies": {
+    "@types/vscode": "^1.96.0",
+    "@types/mocha": "^10.0.10",
+    "@types/node": "20.x",
+    "eslint": "^9.16.0",
+    "@vscode/test-cli": "^0.0.10",
+    "@vscode/test-electron": "^2.4.1"
+  }
 }
