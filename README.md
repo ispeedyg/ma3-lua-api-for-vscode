@@ -2,9 +2,9 @@
 # Ma3 lua API
 This is a VS Code extension for the Grand Ma 3 Lua Api, it provide autocomplete and documentation for functions to write Grand Ma 3 plugins.
 
-![insertion](images/insertion.gif)
+![insertion](images/suggestion.png)
 
-![documentation](images/documentation.gif)
+![documentation](images/documentation.png)
 
 
 ## How to contribute

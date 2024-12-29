@@ -3,10 +3,9 @@ const path = require('path');
 const fs = require('fs');
 
 function activate(context) {
-    AddApiToWorkspace(context)
+    addApiToWorkspace(context)
 
-    const parentDir = path.dirname(__dirname);
-    const objectFreeApiPath = path.join(parentDir, 'resources', 'ma3-object-free-api.json');
+    const objectFreeApiPath = getObjectFreeApiPath(context);
     
     fs.readFile(objectFreeApiPath, 'utf8', (err, data) => {
         if (err) {
@@ -14,15 +13,38 @@ function activate(context) {
             return;
         }
 
-        AddFunctionsHover(context, data)
-        AddFunctionsCompletion(data)    
+        addFunctionsHover(context, data)
+        addFunctionsCompletion(data)    
     });
 }
 
-function AddApiToWorkspace(context){
-    const luaLibraryPath = path.join(context.extensionPath, 'resources', 'ma3_documented_api.lua');
-    const config = vscode.workspace.getConfiguration('Lua');
-    let currentLibraries = config.get('workspace.library') || [];
+function addApiToWorkspace(context){
+    const luaConfig = vscode.workspace.getConfiguration('Lua');
+
+    const objectFreeApiPath = getObjectFreeApiPath(context);
+    const objectFreeApiData = JSON.parse(fs.readFileSync(objectFreeApiPath, 'utf8'));
+    const functionNames = Object.keys(objectFreeApiData);
+
+    disableAutocompleteForApiNames(luaConfig, functionNames);
+
+    importDummyFunctions(context, luaConfig);
+    
+    addFunctionNamesToCSpell(functionNames);
+}
+
+function disableAutocompleteForApiNames(luaConfig, functionNames){
+    const diagnosticsConfig = {};
+    functionNames.forEach(funcName => {
+        diagnosticsConfig[funcName] = 'disable';
+    });
+
+    luaConfig.update('diagnostics.globals', diagnosticsConfig, vscode.ConfigurationTarget.Workspace);
+    luaConfig.update('completion.enable', false, vscode.ConfigurationTarget.Workspace);
+}
+
+function importDummyFunctions(context, luaConfig){
+    const luaLibraryPath = getDummyFunctionLibraryPath(context);
+    let currentLibraries = luaConfig.get('workspace.library') || [];
 
     if (!Array.isArray(currentLibraries)) {
         currentLibraries = [];
@@ -30,11 +52,26 @@ function AddApiToWorkspace(context){
 
     if (!currentLibraries.includes(luaLibraryPath)) {
         currentLibraries.push(luaLibraryPath);
-        config.update('workspace.library', currentLibraries, vscode.ConfigurationTarget.Global);
+        luaConfig.update('workspace.library', currentLibraries, vscode.ConfigurationTarget.Global);
     }
 }
 
-function AddFunctionsHover(context, data){
+async function addFunctionNamesToCSpell(functionNames){
+    const cspellConfig = vscode.workspace.getConfiguration('cSpell');
+
+    let words = cspellConfig.get('words') || [];
+    if (!Array.isArray(words)) {
+        words = [];
+    }
+
+    const newWords = functionNames.filter(word => !words.includes(word));
+    if (newWords.length > 0) {
+        words = [...words, ...newWords];
+        await cspellConfig.update('words', words, vscode.ConfigurationTarget.Workspace);
+    }
+}
+
+function addFunctionsHover(context, data){
     
     const objectFreeJson = JSON.parse(data);
     const objectFreeKeys = Object.keys(objectFreeJson); 
@@ -83,7 +120,7 @@ function AddFunctionsHover(context, data){
         }));
 }
 
-function AddFunctionsCompletion(data){
+function addFunctionsCompletion(data){
     const objectFreeJson = JSON.parse(data);
 
     const snippetProvider = vscode.languages.registerCompletionItemProvider('lua', {
@@ -93,12 +130,10 @@ function AddFunctionsCompletion(data){
                 item.insertText = new vscode.SnippetString(data.body[0]);
                 item.kind = vscode.CompletionItemKind.Function;
                 item.sortText = "0";
-                item.detail = "grandMA3 API";
-                
-        item.label = { 
-            label: funcName,
-            description: "grandMa3 API",
-        };
+                item.label = { 
+                    label: data.prefix,
+                    description: "GrandMa3 API",
+                };
                 return item;
             });
         }
@@ -106,7 +141,7 @@ function AddFunctionsCompletion(data){
 }
 
 function removeApiFromWorkspace(){
-    const luaLibraryPath = path.join(context.extensionPath, 'resources', 'ma3_documented_api.lua');
+    const luaLibraryPath = getDummyFunctionLibraryPath(context);
     const config = vscode.workspace.getConfiguration('Lua');
     let currentLibraries = config.get('workspace.library') || [];
 
@@ -114,6 +149,18 @@ function removeApiFromWorkspace(){
         currentLibraries = currentLibraries.filter(path => path !== luaLibraryPath);
         config.update('workspace.library', currentLibraries, vscode.ConfigurationTarget.Global);
     }
+}
+
+function getObjectFreeApiPath(context){
+    return normalizePath(path.join(context.extensionPath, 'resources', 'ma3_object_free_api.json'));
+}
+
+function getDummyFunctionLibraryPath(context){
+    return normalizePath(path.join(context.extensionPath, 'resources', 'ma3_dummy_api.lua'));
+}
+
+function normalizePath(filePath) {
+    return path.resolve(filePath).toLowerCase();
 }
 
 function deactivate() {
