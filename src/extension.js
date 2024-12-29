@@ -14,7 +14,7 @@ function activate(context) {
         }
 
         addFunctionsHover(context, data)
-        addFunctionsCompletion(data)    
+        addFunctionsCompletion(context, data)    
     });
 }
 
@@ -25,21 +25,22 @@ function addApiToWorkspace(context){
     const objectFreeApiData = JSON.parse(fs.readFileSync(objectFreeApiPath, 'utf8'));
     const functionNames = Object.keys(objectFreeApiData);
 
-    disableAutocompleteForApiNames(luaConfig, functionNames);
+    addApiToGlobal(luaConfig, functionNames);
 
     importDummyFunctions(context, luaConfig);
-    
-    addFunctionNamesToCSpell(functionNames);
 }
 
-function disableAutocompleteForApiNames(luaConfig, functionNames){
-    const diagnosticsConfig = {};
-    functionNames.forEach(funcName => {
-        diagnosticsConfig[funcName] = 'disable';
-    });
+function addApiToGlobal(luaConfig, functionNames){
+    const globalTypes = ['Handle'];
 
-    luaConfig.update('diagnostics.globals', diagnosticsConfig, vscode.ConfigurationTarget.Workspace);
-    luaConfig.update('completion.enable', false, vscode.ConfigurationTarget.Workspace);
+    let currentGlobals = luaConfig.get('diagnostics.globals') || {};
+    if (typeof currentGlobals !== 'object') {
+        currentGlobals = {};
+    }
+    
+    const updatedGlobals = [...new Set([...currentGlobals, ...globalTypes, ...functionNames])];
+
+    luaConfig.update('diagnostics.globals', updatedGlobals, vscode.ConfigurationTarget.Workspace);
 }
 
 function importDummyFunctions(context, luaConfig){
@@ -56,21 +57,6 @@ function importDummyFunctions(context, luaConfig){
     }
 }
 
-async function addFunctionNamesToCSpell(functionNames){
-    const cspellConfig = vscode.workspace.getConfiguration('cSpell');
-
-    let words = cspellConfig.get('words') || [];
-    if (!Array.isArray(words)) {
-        words = [];
-    }
-
-    const newWords = functionNames.filter(word => !words.includes(word));
-    if (newWords.length > 0) {
-        words = [...words, ...newWords];
-        await cspellConfig.update('words', words, vscode.ConfigurationTarget.Workspace);
-    }
-}
-
 function addFunctionsHover(context, data){
     
     const objectFreeJson = JSON.parse(data);
@@ -79,6 +65,23 @@ function addFunctionsHover(context, data){
             provideHover(document, position, token) {
                 const range = document.getWordRangeAtPosition(position);
                 if (!range) return;
+
+                const lineText = document.lineAt(position).text;
+                const linePrefix = lineText.slice(0, position.character);
+    
+                if (linePrefix.trim().startsWith('--')) {
+                    return [];
+                }
+    
+                const cleanPrefix = linePrefix.trim();
+                
+                const lastColon = cleanPrefix.lastIndexOf(':');
+                const lastDot = cleanPrefix.lastIndexOf('.');
+                const lastSpace = cleanPrefix.lastIndexOf(' ');
+                
+                if (lastColon > lastDot && lastColon > lastSpace) {
+                    return [];
+                }
 
                 const snippetKey = document.getText(range);
                 
@@ -120,12 +123,29 @@ function addFunctionsHover(context, data){
         }));
 }
 
-function addFunctionsCompletion(data){
+function addFunctionsCompletion(context, data){
     const objectFreeJson = JSON.parse(data);
 
     const snippetProvider = vscode.languages.registerCompletionItemProvider('lua', {
-        provideCompletionItems() {
-            return Object.entries(objectFreeJson).map(([funcName, data]) => {
+        provideCompletionItems(document, position) {
+            const lineText = document.lineAt(position).text;
+            const linePrefix = lineText.slice(0, position.character);
+
+            if (linePrefix.trim().startsWith('--')) {
+                return [];
+            }
+
+            const cleanPrefix = linePrefix.trim();
+            
+            const lastColon = cleanPrefix.lastIndexOf(':');
+            const lastDot = cleanPrefix.lastIndexOf('.');
+            const lastSpace = cleanPrefix.lastIndexOf(' ');
+            
+            if (lastColon > lastDot && lastColon > lastSpace) {
+                return [];
+            }
+
+            var suggestions = Object.entries(objectFreeJson).map(([funcName, data]) => {
                 const item = new vscode.CompletionItem(funcName, vscode.CompletionItemKind.Snippet);
                 item.insertText = new vscode.SnippetString(data.body[0]);
                 item.kind = vscode.CompletionItemKind.Function;
@@ -136,8 +156,11 @@ function addFunctionsCompletion(data){
                 };
                 return item;
             });
+
+            return suggestions;
         }
     });
+    context.subscriptions.push(snippetProvider);
 }
 
 function removeApiFromWorkspace(){
