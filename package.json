@@ -2,22 +2,28 @@
   "name": "ma3-lua-api",
   "displayName": "Ma3 Lua Api",
   "description": "Lua extension for Grand Ma 3 Api",
-  "version": "0.1.0",
+  "version": "0.2.0",
+  "license": "GPL v3",
+  "author": "Jeremy Dufeux",
+	"publisher": "Carrot Industries",
+  "homepage": "https://github.com/JeremyDufeux/ma3-lua-api",
   "repository": {
     "type": "git",
     "url": "https://github.com/JeremyDufeux/ma3-lua-api.git"
   },
-  
   "engines": {
     "vscode": "^1.96.0"
   },
+  "bugs": {
+    "url": "https://github.com/JeremyDufeux/ma3-lua-api/issues"
+  },
   "categories": [
-    "Programming Languages"
+    "Programming Languages",
+    "Snippets"
   ],
   "activationEvents": [
     "onLanguage:lua"
   ],
-  
   "main": "./src/extension.js",
   "files": [
     "resources/ma3_documented_api.lua"
@@ -32,5 +38,12 @@
     "eslint": "^9.16.0",
     "@vscode/test-cli": "^0.0.10",
     "@vscode/test-electron": "^2.4.1"
-  }
+  },
+  "icon": "images/logo.png",
+  "keywords": [
+    "lua",
+    "grandma3",
+    "api",
+    "vscode-extension"
+  ]
 }

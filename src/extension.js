@@ -3,124 +3,142 @@ const path = require('path');
 const fs = require('fs');
 
 function activate(context) {
-    addApiToWorkspace(context)
+    configureWorkspace(context)
 
     const objectFreeApiPath = getObjectFreeApiPath(context);
     
     fs.readFile(objectFreeApiPath, 'utf8', (err, data) => {
         if (err) {
-            console.error('Error reading file lua.json:', err);
+            console.error('Error reading object free Api file:', err);
             return;
         }
 
         addFunctionsHover(context, data)
         addFunctionsCompletion(context, data)    
     });
+
+    const objectApiPath = getObjectApiPath(context);
+    
+    fs.readFile(objectApiPath, 'utf8', (err, data) => {
+        if (err) {
+            console.error('Error reading object Api file:', err);
+            return;
+        }
+
+        addFunctionsHover(context, data, "Handle")
+        addObjectFunctionsCompletion(context, data)    
+    });
 }
 
-function addApiToWorkspace(context){
+function configureWorkspace(context){
+    importDummyFunctions(context);
+    addFunctionNamesToCSpell(context);
+}
+
+async function importDummyFunctions(context){
     const luaConfig = vscode.workspace.getConfiguration('Lua');
 
+    await luaConfig.update('workspace.library', [
+        context.asAbsolutePath('resources')
+    ], vscode.ConfigurationTarget.Workspace);
+}
+
+async function addFunctionNamesToCSpell(context){
     const objectFreeApiPath = getObjectFreeApiPath(context);
     const objectFreeApiData = JSON.parse(fs.readFileSync(objectFreeApiPath, 'utf8'));
     const functionNames = Object.keys(objectFreeApiData);
 
-    addApiToGlobal(luaConfig, functionNames);
+    const cspellConfig = vscode.workspace.getConfiguration('cSpell');
 
-    importDummyFunctions(context, luaConfig);
-}
-
-function addApiToGlobal(luaConfig, functionNames){
-    const globalTypes = ['Handle'];
-
-    let currentGlobals = luaConfig.get('diagnostics.globals') || {};
-    if (typeof currentGlobals !== 'object') {
-        currentGlobals = {};
-    }
-    
-    const updatedGlobals = [...new Set([...currentGlobals, ...globalTypes, ...functionNames])];
-
-    luaConfig.update('diagnostics.globals', updatedGlobals, vscode.ConfigurationTarget.Workspace);
-}
-
-function importDummyFunctions(context, luaConfig){
-    const luaLibraryPath = getDummyFunctionLibraryPath(context);
-    let currentLibraries = luaConfig.get('workspace.library') || [];
-
-    if (!Array.isArray(currentLibraries)) {
-        currentLibraries = [];
+    let words = cspellConfig.get('words') || [];
+    if (!Array.isArray(words)) {
+        words = [];
     }
 
-    if (!currentLibraries.includes(luaLibraryPath)) {
-        currentLibraries.push(luaLibraryPath);
-        luaConfig.update('workspace.library', currentLibraries, vscode.ConfigurationTarget.Global);
+    const newWords = functionNames.filter(word => !words.includes(word));
+    if (newWords.length > 0) {
+        words = [...words, ...newWords];
+        await cspellConfig.update('words', words, vscode.ConfigurationTarget.Workspace);
     }
 }
 
-function addFunctionsHover(context, data){
+function addFunctionsHover(context, data, className){
+    const jsonData = JSON.parse(data);
+    var jsonKeys = Object.keys(jsonData); 
+    jsonKeys = processJsonKeys(jsonKeys, className);
     
-    const objectFreeJson = JSON.parse(data);
-    const objectFreeKeys = Object.keys(objectFreeJson); 
-        context.subscriptions.push(vscode.languages.registerHoverProvider('lua', {
-            provideHover(document, position, token) {
-                const range = document.getWordRangeAtPosition(position);
-                if (!range) return;
+    context.subscriptions.push(vscode.languages.registerHoverProvider('lua', {
+        provideHover(document, position, token) {
+            const range = document.getWordRangeAtPosition(position);
+            if (!range) return;
 
-                const lineText = document.lineAt(position).text;
-                const linePrefix = lineText.slice(0, position.character);
-    
-                if (linePrefix.trim().startsWith('--')) {
-                    return [];
-                }
-    
-                const cleanPrefix = linePrefix.trim();
-                
-                const lastColon = cleanPrefix.lastIndexOf(':');
-                const lastDot = cleanPrefix.lastIndexOf('.');
-                const lastSpace = cleanPrefix.lastIndexOf(' ');
-                
-                if (lastColon > lastDot && lastColon > lastSpace) {
-                    return [];
-                }
+            const lineText = document.lineAt(position).text;
+            const linePrefix = lineText.slice(0, position.character);
 
-                const snippetKey = document.getText(range);
-                
-                const markdownContent = new vscode.MarkdownString();
-                markdownContent.isTrusted = true;
-
-                if (objectFreeKeys.includes(snippetKey) && objectFreeJson[snippetKey]) {
-                    const snippetData = objectFreeJson[snippetKey];
-                    const cleanedPrefix = snippetData.prefix.replace(/\(.*?\)/g, '');
-
-                     markdownContent.appendMarkdown(`# ${cleanedPrefix}\n\n`);
-                    
-                    
-                    markdownContent.appendMarkdown(`${snippetData.description}\n\n`);
-
-                    if (snippetData.examples) {
-                        const examples = snippetData.examples;
-                        const examplesCount = Object.keys(examples).length;
-
-                        for (const key in examples) {
-                            const example = examples[key];
-                            if (examplesCount > 1) {
-                                markdownContent.appendMarkdown(`\n\nExample ${key}\n-------\n\n`);
-                            } else {
-                                markdownContent.appendMarkdown(`\n\nExample\n-------\n\n`);
-                            }
-                            markdownContent.appendMarkdown(example.description);
-                            markdownContent.appendCodeblock(example.code, 'lua');
-                            markdownContent.appendMarkdown(`\n\n${example.suffix}`);
-                        }
-                    }
-
-                    markdownContent.appendMarkdown(`${snippetData.suffix}\n\n`);
-                    return new vscode.Hover(markdownContent);
-                }
-
-                return null;
+            if (linePrefix.trim().startsWith('--')) {
+                return [];
             }
-        }));
+
+            const snippetKey = document.getText(range);
+            const markdownContent = new vscode.MarkdownString();
+            markdownContent.isTrusted = true;
+
+            jsonDataExist = false;
+            if(className && jsonData[className+":"+snippetKey]){
+                jsonDataExist = true;
+            } else if(jsonData[snippetKey]){
+                jsonDataExist = true;
+            }
+
+            if (jsonKeys.includes(snippetKey) && jsonDataExist) {
+                var snippetData = jsonData[snippetKey];
+                if(className){
+                    snippetData = jsonData[className+":"+snippetKey];
+                }
+
+                const cleanedPrefix = snippetData.prefix.replace(/\(.*?\)/g, '');
+
+                markdownContent.appendMarkdown(`# ${cleanedPrefix}\n\n`);                
+                markdownContent.appendMarkdown(`${snippetData.description}\n\n`);
+
+                if (snippetData.examples) {
+                    const examples = snippetData.examples;
+                    const examplesCount = Object.keys(examples).length;
+
+                    for (const key in examples) {
+                        const example = examples[key];
+                        if (examplesCount > 1) {
+                            markdownContent.appendMarkdown(`\n\nExample ${key}\n-------\n\n`);
+                        } else {
+                            markdownContent.appendMarkdown(`\n\nExample\n-------\n\n`);
+                        }
+                        markdownContent.appendMarkdown(example.description);
+                        markdownContent.appendCodeblock(example.code, 'lua');
+                        markdownContent.appendMarkdown(`\n\n${example.suffix}`);
+                    }
+                }
+
+                markdownContent.appendMarkdown(`${snippetData.suffix}\n\n`);
+                return new vscode.Hover(markdownContent);
+            }
+
+            return null;
+        }
+    }));
+}
+
+function processJsonKeys(jsonKeys, className) {
+    if (!className) {
+        return jsonKeys;
+    }
+
+    return jsonKeys.map(key => {
+        const prefix = `${className}:`;
+        if (key.startsWith(prefix)) {
+            return key.slice(prefix.length);
+        }
+        return key;
+    });
 }
 
 function addFunctionsCompletion(context, data){
@@ -152,7 +170,7 @@ function addFunctionsCompletion(context, data){
                 item.sortText = "0";
                 item.label = { 
                     label: data.prefix,
-                    description: "GrandMa3 API",
+                    description: "GrandMa 3 API",
                 };
                 return item;
             });
@@ -163,23 +181,58 @@ function addFunctionsCompletion(context, data){
     context.subscriptions.push(snippetProvider);
 }
 
-function removeApiFromWorkspace(){
-    const luaLibraryPath = getDummyFunctionLibraryPath(context);
-    const config = vscode.workspace.getConfiguration('Lua');
-    let currentLibraries = config.get('workspace.library') || [];
+function addObjectFunctionsCompletion(context, data){
+    const objectJson = JSON.parse(data);
 
-    if (Array.isArray(currentLibraries)) {
-        currentLibraries = currentLibraries.filter(path => path !== luaLibraryPath);
-        config.update('workspace.library', currentLibraries, vscode.ConfigurationTarget.Global);
-    }
+    const snippetProvider = vscode.languages.registerCompletionItemProvider('lua', {
+        provideCompletionItems(document, position) {
+            const lineText = document.lineAt(position).text;
+            const linePrefix = lineText.slice(0, position.character);
+
+            if (linePrefix.trim().startsWith('--')) {
+                return [];
+            }
+
+            const cleanPrefix = linePrefix.trim();
+            
+            const lastColon = cleanPrefix.lastIndexOf(':');
+            const lastDot = cleanPrefix.lastIndexOf('.');
+            const lastSpace = cleanPrefix.lastIndexOf(' ');
+            
+            if (!(lastColon > lastDot && lastColon > lastSpace)) {
+                return [];
+            }
+
+            var suggestions = Object.entries(objectJson)
+                .filter(([funcName]) => funcName.startsWith('Handle:'))
+                .map(([funcName, data]) => {
+                    const displayName = funcName.replace('Handle:', '');
+                    const item = new vscode.CompletionItem(displayName, vscode.CompletionItemKind.Method);
+                    item.insertText = new vscode.SnippetString(data.body[0]);
+                    item.documentation = new vscode.MarkdownString(data.description);
+                    item.kind = vscode.CompletionItemKind.Method;
+                    item.sortText = "0";
+                    item.label = { 
+                        label: data.prefix,
+                        description: "GrandMa 3 API",
+                    };
+
+                    return item;
+                });
+
+            return suggestions;
+        }
+    }, ':');
+    
+    context.subscriptions.push(snippetProvider);
 }
 
 function getObjectFreeApiPath(context){
     return normalizePath(path.join(context.extensionPath, 'resources', 'ma3_object_free_api.json'));
 }
 
-function getDummyFunctionLibraryPath(context){
-    return normalizePath(path.join(context.extensionPath, 'resources', 'ma3_dummy_api.lua'));
+function getObjectApiPath(context){
+    return normalizePath(path.join(context.extensionPath, 'resources', 'ma3_object_api.json'));
 }
 
 function normalizePath(filePath) {
@@ -187,7 +240,6 @@ function normalizePath(filePath) {
 }
 
 function deactivate() {
-    removeApiFromWorkspace()
 }
 
 module.exports = {

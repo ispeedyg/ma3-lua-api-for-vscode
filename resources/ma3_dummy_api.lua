@@ -1,3 +1,93 @@
+---@meta
+
+-- Object definition
+-- ================================
+
+---@class Handle
+Handle = {}
+
+---@return Handle
+function Handle:new()
+end
+
+---@param baseLocationHandle? Handle @Optional
+---@param useToAddrIndex? boolean @Optional
+---@return string
+function Handle:Addr(baseLocationHandle, useToAddrIndex)
+    return ""
+end
+
+---@param baseLocationHandle? Handle @Optional
+---@param returnNamesInQuotes? boolean @Optional
+---@return string
+function Handle:AddrNative(baseLocationHandle, returnNamesInQuotes)
+    return ""
+end
+
+---@return table
+function Handle:Children()
+    return {}
+end
+
+---@return integer
+function Handle:Count()
+    return 0
+end
+
+function Handle:Dump()
+end
+
+---@param filePath string
+---@param fileName string
+---@return boolean
+function Handle:Export(filePath, fileName)
+    return true
+end
+
+---@param propertyName string
+---@param roleInteger integer
+---@return string
+function Handle:Get(propertyName, roleInteger)
+    return ""
+end
+
+---@return string
+function Handle:GetChildClass()
+    return ""
+end
+
+---@return string
+function Handle:GetClass()
+    return ""
+end
+
+---@return boolean
+function Handle:HasActivePlayback()
+    return true
+end
+
+---@param filePath string
+---@param fileName string
+---@return boolean
+function Handle:Import(filePath, fileName)
+    return true
+end
+
+---@param childIndex integer
+---@return Handle|nil
+function Handle:Ptr(childIndex)
+    return Handle:new()
+end
+
+---@return string
+function Handle:ToAddr()
+    return ""
+end
+
+
+-- Object free definition
+-- ================================
+
 ---@param fixtureTable table
 ---@return boolean|nil
 function AddFixtures(fixtureTable)
@@ -15,16 +105,16 @@ end
 
 ---@param dmxMode Handle
 ---@param startAddress string
----@param count integer|nil @Optional
----@param breakIndex integer @Optional
+---@param count? integer|nil @Optional
+---@param breakIndex? integer @Optional
 ---@return boolean
 function CheckDMXCollision(dmxMode, startAddress, count, breakIndex)
     return true
 end
 
 ---@param fixtureId integer
----@param count integer @Optional
----@param type integer @Optional
+---@param count? integer @Optional
+---@param type? integer @Optional
 function CheckFIDCollision(fixtureId, count, type)
 end
 
@@ -44,22 +134,22 @@ function CloseUndo(undoHandle)
 end
 
 ---@param command string
----@param undoHandle Handle @Optional
+---@param undoHandle? Handle @Optional
 ---@return string
 function Cmd(command, undoHandle)
     return ""
 end
 
 ---@param command string
----@param undoHandle Handle @Optional
----@param handleTarget Handle @Optional
+---@param undoHandle? Handle @Optional
+---@param handleTarget? Handle @Optional
 function CmdIndirect(command, undoHandle, handleTarget)
     
 end
 
 ---@param command string
----@param undoHandle Handle @Optional
----@param handleTarget Handle @Optional
+---@param undoHandle? Handle @Optional
+---@param handleTarget? Handle @Optional
 function CmdIndirectWait(command, undoHandle, handleTarget)
     
 end
@@ -75,9 +165,9 @@ function ConfigTable()
 end
 
 ---@param title string
----@param text string @Optional
----@param screen integer @Optional
----@param showCancel boolean @Optional
+---@param text? string @Optional
+---@param screen? integer @Optional
+---@param showCancel? boolean @Optional
 ---@return boolean
 function Confirm(title, text, screen, showCancel)
     return true
@@ -85,7 +175,7 @@ end
 
 ---@param fixtureTableHandle Handle
 ---@param multiPatchAmount integer
----@param undoText string @Optional
+---@param undoText? string @Optional
 ---@return integer|nil
 function CreateMultiPatch(fixtureTableHandle, multiPatchAmount, undoText)
     return 0
@@ -150,7 +240,7 @@ function DeviceConfiguration()
 end
 
 ---@param path string
----@param filter string @Optional
+---@param filter? string @Optional
 ---@return table
 function DirList(path, filter)
     return {}
@@ -158,7 +248,7 @@ end
 
 ---@param displayIndex integer
 ---@param position table
----@param duration integer @Optional
+---@param duration? integer @Optional
 function DrawPointer(displayIndex, position, duration)
 end
 
@@ -299,15 +389,15 @@ function GetDisplayCollect()
 end
 
 ---@param universe integer
----@param isPercent boolean @Optional
+---@param isPercent? boolean @Optional
 ---@return table|nil
 function GetDMXUniverse(universe, isPercent)
     return {}
 end
 
 ---@param address integer
----@param universe integer @Optional
----@param returnPercent boolean @Optional
+---@param universe? integer @Optional
+---@param returnPercent? boolean @Optional
 ---@return integer|nil
 function GetDMXValue(address, universe, returnPercent)
     return 0
@@ -344,7 +434,7 @@ end
 
 ---@param folderNameOrIndex string|integer
 ---@param basePath string
----@param createIfNotExist boolean @Optional 
+---@param createIfNotExist? boolean @Optional 
 ---@return string
 function GetPathOverrideFor(folderNameOrIndex, basePath, createIfNotExist)
     return ""
@@ -356,7 +446,7 @@ function GetPathSeparator()
 end
 
 ---@param objectHandle Handle
----@param pathContentType integer @Optional
+---@param pathContentType? integer @Optional
 ---@return string
 function GetPathType(objectHandle, pathContentType)
     return ""
@@ -369,8 +459,8 @@ function GetRTChannel(rtChannelIndex)
 end
 
 ---@param presetHandle Handle
----@param returnPhaserData boolean|nil @Optional
----@param extract boolean @Optional
+---@param returnPhaserData? boolean|nil @Optional
+---@param extract? boolean @Optional
 ---@return table|nil
 function GetPresetData(presetHandle, returnPhaserData, extract)
     return {}
@@ -382,7 +472,7 @@ function GetRTChannelCount()
 end
 
 ---@param fixtureIndexOfHandle integer|Handle
----@param returnHandles boolean @Optional
+---@param returnHandles? boolean @Optional
 ---@return table
 function GetRTChannels(fixtureIndexOfHandle, returnHandles)
     return {}
@@ -457,7 +547,7 @@ function GetUIChannelIndex(patchIndex, attributeIndex)
 end
 
 ---@param fixtureIndexOrHandle integer|Handle
----@param returnHandles boolean @Optional
+---@param returnHandles? boolean @Optional
 ---@return table
 function GetUIChannels(fixtureIndexOrHandle, returnHandles)
     return {}
@@ -497,7 +587,7 @@ end
 ---@param functionName function
 ---@param objectHandle Handle
 ---@param pluginHandle Handle
----@param passedObjectHandle Handle @Optional
+---@param passedObjectHandle? Handle @Optional
 ---@return integer
 function HookObjectChange(functionName, objectHandle, pluginHandle, passedObjectHandle)
     return 0
@@ -697,8 +787,9 @@ end
 
 ---@param variableSetHandle Handle
 ---@param varName string
+---@param value string|number
 ---@return boolean
-function SetVar(variableSetHandle, varName)
+function SetVar(variableSetHandle, varName, value)
     return true
 end
 
@@ -728,10 +819,10 @@ function StrToHandle(handleString)
     return Handle:new()
 end
 
----@param title string @Optional
----@param textGuide string @Optional
----@param xPosition string @Optional
----@param yPosition string @Optional
+---@param title? string @Optional
+---@param textGuide? string @Optional
+---@param xPosition? string @Optional
+---@param yPosition? string @Optional
 ---@return string
 function TextInput(title, textGuide, xPosition, yPosition)
     return ""
@@ -745,13 +836,13 @@ end
 ---@param timedFunction function
 ---@param waitSeconds integer
 ---@param iterations integer
----@param TimerCleanup function|nil @Optional
----@param passedObjectHandle Handle @Optional
+---@param TimerCleanup? function|nil @Optional
+---@param passedObjectHandle? Handle @Optional
 function Timer(timedFunction, waitSeconds, iterations, TimerCleanup, passedObjectHandle)
 end
 
 ---@param objectHandle Handle
----@param returnType boolean @Optional
+---@param returnType? boolean @Optional
 ---@return string
 function ToAddr(objectHandle, returnType)
     return ""
@@ -767,10 +858,10 @@ function Unhook(hookId)
 end
 
 ---@param functionName function|nil
----@param tagetObjectHandle Handle|nil
----@param contxtObjectHandle Handle|nil
+---@param targetObjectHandle Handle|nil
+---@param contextObjectHandle Handle|nil
 ---@return integer
-function UnhookMultiple(functionName, tagetObjectHandle, contxtObjectHandle)
+function UnhookMultiple(functionName, targetObjectHandle, contextObjectHandle)
     return 0
 end
 
@@ -781,92 +872,5 @@ end
 
 ---@return string
 function Version()
-    return ""
-end
-
-
---------- Handle ------------
-
----@class Handle
-Handle = {}
-Handle.__index = Handle
-
----@return Handle
-function Handle:new()
-    local instance = setmetatable({}, Handle)
-    return instance
-end
-
----@param baseLocationHandle Handle @Optional
----@param useToAddrIndex boolean @Optional
----@return string
-function Handle:Addr(baseLocationHandle, useToAddrIndex)
-    return ""
-end
-
----@param baseLocationHandle Handle @Optional
----@param returnNamesInQuotes boolean @Optional
----@return string
-function Handle:AddrNative(baseLocationHandle, returnNamesInQuotes)
-    return ""
-end
-
----@return table
-function Handle:Children()
-    return {}
-end
-
----@return integer
-function Handle:Count()
-    return 0
-end
-
-function Handle:Dump()
-end
-
----@param filePath string
----@param fileName string
----@return boolean
-function Handle:Export(filePath, fileName)
-    return true
-end
-
----@param propertyName string
----@param roleInteger integer
----@return string
-function Handle:Get(propertyName, roleInteger)
-    return ""
-end
-
----@return string
-function Handle:GetChildClass()
-    return ""
-end
-
----@return string
-function Handle:GetClass()
-    return ""
-end
-
----@return boolean
-function Handle:HasActivePlayback()
-    return true
-end
-
----@param filePath string
----@param fileName string
----@return boolean
-function Handle:Import(filePath, fileName)
-    return true
-end
-
----@param childIndex integer
----@return Handle|nil
-function Handle:Ptr(childIndex)
-    return Handle:new()
-end
-
----@return string
-function Handle:ToAddr()
     return ""
 end
