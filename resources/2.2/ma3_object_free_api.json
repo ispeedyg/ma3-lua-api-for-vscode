@@ -1,4 +1,5 @@
-{  
+{
+  "_Ma3_API_Version": "2.2",
   "AddFixtures": {
     "prefix": "AddFixtures(fixtureTable)",
     "body": [
@@ -3196,8 +3197,8 @@
         "description": "This example prints the software version in the Command Line History:"
 
         ,
-        "code": "return function()\n    Printf(\"Software version: %s\", Version())\nend"
-
+        "code":"return function()\n    local textVersion, major, minor, streaming, ui = Version();\n    Printf(\"Software version is: %s\", textVersion)\n    Printf(\"Major version number is: %i\", major)\n    Printf(\"Minor version number is: %i\", minor)\n    Printf(\"Streaming version number is: %i\", streaming)\n    Printf(\"UI version number is: %i\", ui)\nend\n"
+        
         ,
         "suffix": ""
       }
