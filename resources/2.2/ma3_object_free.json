@@ -139,7 +139,7 @@
     
   },
   "CloseAllOverlays": {
-    "prefix": "CloseAllOverlays",
+    "prefix": "CloseAllOverlays()",
     "body": [
       "CloseAllOverlays()"
     ],
@@ -254,7 +254,7 @@
     
   },
   "CmdObj": {
-    "prefix": "CmdObj",
+    "prefix": "CmdObj()",
     "body": [
       "CmdObj()"
     ],
@@ -277,7 +277,7 @@
     
   },
   "ConfigTable": {
-    "prefix": "ConfigTable",
+    "prefix": "ConfigTable()",
     "body": [
       "ConfigTable()"
     ],
@@ -369,7 +369,7 @@
     
   },
   "CurrentEnvironment": {
-    "prefix": "CurrentEnvironment",
+    "prefix": "CurrentEnvironment()",
     "body": [
       "CurrentEnvironment()"
     ],
@@ -392,7 +392,7 @@
     
   },
   "CurrentExecPage": {
-    "prefix": "CurrentExecPage",
+    "prefix": "CurrentExecPage()",
     "body": [
       "CurrentExecPage()"
     ],
@@ -412,7 +412,7 @@
     
   },
   "CurrentProfile": {
-    "prefix": "CurrentProfile",
+    "prefix": "CurrentProfile()",
     "body": [
       "CurrentProfile()"
     ],
@@ -435,7 +435,7 @@
     
   },
   "CurrentScreenConfig": {
-    "prefix": "CurrentScreenConfig",
+    "prefix": "CurrentScreenConfig()",
     "body": [
       "CurrentScreenConfig()"
     ],
@@ -458,7 +458,7 @@
     
   },
   "CurrentUser": {
-    "prefix": "CurrentUser",
+    "prefix": "CurrentUser()",
     "body": [
       "CurrentUser()"
     ],
@@ -478,7 +478,7 @@
     
   },
   "DataPool": {
-    "prefix": "DataPool",
+    "prefix": "DataPool()",
     "body": [
       "DataPool()"
     ],
@@ -500,7 +500,7 @@
     
   },
   "DefaultDisplayPositions": {
-    "prefix": "DefaultDisplayPositions",
+    "prefix": "DefaultDisplayPositions()",
     "body": [
       "DefaultDisplayPositions()"
     ],
@@ -556,7 +556,7 @@
     
   },
   "DeskLocked": {
-    "prefix": "DeskLocked",
+    "prefix": "DeskLocked()",
     "body": [
       "DeskLocked()"
     ],
@@ -579,7 +579,7 @@
     
   },
   "DeviceConfiguration": {
-    "prefix": "DeviceConfiguration",
+    "prefix": "DeviceConfiguration()",
     "body": [
       "DeviceConfiguration()"
     ],
@@ -878,7 +878,7 @@
     
   },
   "FixtureType": {
-    "prefix": "FixtureType",
+    "prefix": "FixtureType()",
     "body": [
       "FixtureType()"
     ],

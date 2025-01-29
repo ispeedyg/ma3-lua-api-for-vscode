@@ -25,7 +25,6 @@ function activate(context) {
 
     configureWorkspace(context, currentApiVersion);
     loadApiFiles(context, currentApiVersion);
-    
 }
 
 function createApiVersionStatusBarItem() {
@@ -67,7 +66,7 @@ async function showApiVersionQuickPick(context, statusBarItem) {
         }
     );
 
-    if (selection) {
+    if (selection && selection.label != currentVersion) {
         const configuration = vscode.workspace.getConfiguration('grandMa3');
         await configuration.update(API_VERSION_CONFIG_KEY, selection.label, vscode.ConfigurationTarget.Workspace);
 
@@ -101,10 +100,12 @@ function loadApiFiles(context, version) {
         extensionState.completionProviders.length = 0;
     }
 
-    const objectFreeApiPath = getObjectFreeApiPath(context, version);
-    const objectApiPath = getObjectApiPath(context, version);
+    const objectFreeFilePath = getObjectFreeFilePath(context, version);
+    const objectFilePath = getObjectFilePath(context, version);
+    const objectFreeNoDocFilePath = getObjectFreeNoDocFilePath(context, version);
+    const objectNoDocFilePath = getObjectNoDocFilePath(context, version);
     
-    fs.readFile(objectFreeApiPath, 'utf8', (err, data) => {
+    fs.readFile(objectFreeFilePath, 'utf8', (err, data) => {
         if (err) {
             console.error('Error reading object free Api file:', err);
             return;
@@ -114,13 +115,33 @@ function loadApiFiles(context, version) {
         addFunctionsCompletion(context, data);    
     });
     
-    fs.readFile(objectApiPath, 'utf8', (err, data) => {
+    fs.readFile(objectFilePath, 'utf8', (err, data) => {
         if (err) {
             console.error('Error reading object Api file:', err);
             return;
         }
 
         addFunctionsHover(context, data, "Handle");
+        addObjectFunctionsCompletion(context, data);    
+    });
+
+    fs.readFile(objectFreeNoDocFilePath, 'utf8', (err, data) => {
+        if (err) {
+            console.error('Error reading object free Api file:', err);
+            return;
+        }
+
+        addFunctionsNoDocHover(context, data);
+        addFunctionsCompletion(context, data);    
+    });
+    
+    fs.readFile(objectNoDocFilePath, 'utf8', (err, data) => {
+        if (err) {
+            console.error('Error reading object Api file:', err);
+            return;
+        }
+
+        addFunctionsNoDocHover(context, data, "Handle");
         addObjectFunctionsCompletion(context, data);    
     });
 }
@@ -139,7 +160,7 @@ async function importDummyFunctions(context, version){
 }
 
 async function addFunctionNamesToCSpell(context, version) {
-    const objectFreeApiPath = getObjectFreeApiPath(context, version);
+    const objectFreeApiPath = getObjectFreeFilePath(context, version);
     const objectFreeApiData = JSON.parse(fs.readFileSync(objectFreeApiPath, 'utf8'));
     const functionNames = Object.keys(objectFreeApiData);
 
@@ -212,7 +233,11 @@ function addFunctionsHover(context, data, className){
 
                 const cleanedPrefix = snippetData.prefix.replace(/\(.*?\)/g, '');
 
-                markdownContent.appendMarkdown(`# ${cleanedPrefix}\n\n`);                
+                if(className){
+                    markdownContent.appendMarkdown(`# ${className}:${cleanedPrefix}\n\n`);
+                } else {
+                    markdownContent.appendMarkdown(`# ${cleanedPrefix}\n\n`);
+                }
                 markdownContent.appendMarkdown(`${snippetData.description}\n\n`);
 
                 if (snippetData.examples) {
@@ -233,6 +258,80 @@ function addFunctionsHover(context, data, className){
                 }
 
                 markdownContent.appendMarkdown(`${snippetData.suffix}\n\n`);
+                return new vscode.Hover(markdownContent);
+            }
+
+            return null;
+        }
+    });
+
+    context.subscriptions.push(hoverProvider);
+    extensionState.hoverProviders.push(hoverProvider);
+}
+
+function addFunctionsNoDocHover(context, data, className){
+    const jsonData = JSON.parse(data);
+    var jsonKeys = Object.keys(jsonData).filter(key => !key.includes('_')); 
+    jsonKeys = processJsonKeys(jsonKeys, className);
+    
+    const hoverProvider = vscode.languages.registerHoverProvider('lua', {
+        provideHover(document, position, token) {
+            const range = document.getWordRangeAtPosition(position);
+            if (!range) return;
+
+            const lineText = document.lineAt(position).text;
+            const linePrefix = lineText.slice(0, position.character);
+
+            if (linePrefix.trim().startsWith('--')) {
+                return [];
+            }
+            
+            if (className != null) {
+                const cleanPrefix = linePrefix.trim();
+                const lastColon = cleanPrefix.lastIndexOf(':');
+                
+                if (lastColon === -1) {
+                    return [];
+                }
+            } else {
+                const cleanPrefix = linePrefix.trim();
+                
+                const lastColon = cleanPrefix.lastIndexOf(':');
+                const lastDot = cleanPrefix.lastIndexOf('.');
+                const lastSpace = cleanPrefix.lastIndexOf(' ');
+                
+                if (lastColon > lastDot && lastColon > lastSpace) {
+                    return [];
+                }
+            }
+
+            const snippetKey = document.getText(range);
+            const markdownContent = new vscode.MarkdownString();
+            markdownContent.isTrusted = true;
+
+            jsonDataExist = false;
+            if(className && jsonData[className+":"+snippetKey]){
+                jsonDataExist = true;
+            } else if(jsonData[snippetKey]){
+                jsonDataExist = true;
+            }
+
+            if (jsonKeys.includes(snippetKey) && jsonDataExist) {
+                var snippetData = jsonData[snippetKey];
+                if(className){
+                    snippetData = jsonData[className+":"+snippetKey];
+                }
+
+                const cleanedPrefix = snippetData.prefix.replace(/\(.*?\)/g, '');
+
+                if(className){
+                    markdownContent.appendMarkdown(`# ${className}:${cleanedPrefix}\n\n`);
+                } else {
+                    markdownContent.appendMarkdown(`# ${cleanedPrefix}\n\n`);
+                }          
+                markdownContent.appendMarkdown(`This function is not documented, this is what the 'HelpLua' command provided:\n\n`);
+                markdownContent.appendCodeblock(snippetData.code, 'lua');
+
                 return new vscode.Hover(markdownContent);
             }
 
@@ -348,12 +447,20 @@ function addObjectFunctionsCompletion(context, data){
     extensionState.completionProviders.push(snippetProvider);
 }
 
-function getObjectFreeApiPath(context, version){
-    return normalizePath(path.join(context.extensionPath, 'resources', version, 'ma3_object_free_api.json'));
+function getObjectFreeFilePath(context, version){
+    return normalizePath(path.join(context.extensionPath, 'resources', version, 'ma3_object_free.json'));
 }
 
-function getObjectApiPath(context, version){
-    return normalizePath(path.join(context.extensionPath, 'resources', version, 'ma3_object_api.json'));
+function getObjectFilePath(context, version){
+    return normalizePath(path.join(context.extensionPath, 'resources', version, 'ma3_object.json'));
+}
+
+function getObjectFreeNoDocFilePath(context, version){
+    return normalizePath(path.join(context.extensionPath, 'resources', version, 'ma3_object_free_no_doc.json'));
+}
+
+function getObjectNoDocFilePath(context, version){
+    return normalizePath(path.join(context.extensionPath, 'resources', version, 'ma3_object_no_doc.json'));
 }
 
 function normalizePath(filePath) {
