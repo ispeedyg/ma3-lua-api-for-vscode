@@ -3,24 +3,27 @@
 A VS Code extension for the Grand Ma 3 Lua Api, it provide autocomplete and documentation for functions to write Grand Ma 3 plugins.
 
 ### Suggestions:
+When typing the extension provide functions related to the selected API version.
 ![suggestions](images/suggestions.png)
 
-When typing the extension provide functions related to the selected API version.
 
 ### Autocomplete:
+When you select a suggested function, the extension add automatically functions parameters.
 ![autocompletion](images/autocompletion.gif)
 
-When you select a suggested function, the extension add automatically functions parameters.
 
 ### Documentation:
+The extension provide documentation and examples with a mouse over popup.
 ![documentation](images/documentation.png)
 
-The extension provide documentation and examples with a mouse over popup.
+The extension also references functions that are not documented in the official manual, so the popup displays the description provided by the HelpLua command.
+![undocumented_hover](images/undocumented_hover.png)
+
 
 ### API version selection:
+The VS Code bottom toolbar display the actual Ma3 API version.
 ![toolbar-info](images/toolbar-info.png)
 
-The VS Code bottom toolbar display the actual Ma3 API version.
 You can change it by click on id and select the version you need:
 ![version-selection](images/version-selection.png)
 
@@ -69,3 +72,6 @@ This file contain dummy functions with input parameters, you have to enumerate a
     end 
 
 Test your modification and then, start a pull request!
+
+⚠ **Disclaimer**  
+This extension is **not affiliated with or endorsed by MA Lighting**. It is an independent project created to provide autocomplete and documentation for the GrandMA 3 Lua API to assist in writing plugins.
