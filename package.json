@@ -1,8 +1,8 @@
 {
   "name": "ma3-lua-api",
-  "displayName": "Ma3 Lua Api",
+  "displayName": "Ma3 Lua Api for VS Code",
   "description": "Lua extension for Grand Ma 3 Api",
-  "version": "0.4.0",
+  "version": "0.5.0",
 	"publisher": "Carrot-Industries",
   "author": {
     "name": "Jeremy Dufeux",
@@ -61,9 +61,25 @@
     },
     "commands": [
       {
-        "command": "grandMa3.changeApiVersion",
-        "title": "GrandMa 3: Change API Version"
+        "command": "grandMa3.menu",
+        "title": "GrandMa 3: Open Menu",
+        "category": "GrandMA 3 API"
       }
     ]
+  },
+  "menus": {
+      "commandPalette": [
+          {
+              "command": "grandMa3.menu",
+              "when": "editorLangId == lua"
+          }
+      ],
+      "editor/title": [
+          {
+              "command": "grandMa3.menu",
+              "group": "navigation",
+              "when": "editorLangId == lua"
+          }
+      ]
   }
 }

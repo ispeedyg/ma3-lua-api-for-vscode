@@ -11,14 +11,9 @@ const extensionState = {
 
 
 function activate(context) {
+    
     const apiVersionStatusBarItem = createApiVersionStatusBarItem(context);
-    context.subscriptions.push(apiVersionStatusBarItem);
-
-    const changeApiVersionCommand = vscode.commands.registerCommand('grandMa3.changeApiVersion', async () => {
-        await showApiVersionQuickPick(context, apiVersionStatusBarItem);
-
-    });
-    context.subscriptions.push(changeApiVersionCommand);
+    createMenu(context, apiVersionStatusBarItem);
 
     const currentApiVersion = getCurrentApiVersion(context);
     apiVersionStatusBarItem.text = `GrandMa 3 API: ${currentApiVersion}`;
@@ -27,9 +22,40 @@ function activate(context) {
     loadApiFiles(context, currentApiVersion);
 }
 
+function createMenu(context, apiVersionStatusBarItem){
+
+    context.subscriptions.push(apiVersionStatusBarItem);
+
+    const changeApiVersionCommand = vscode.commands.registerCommand('grandMa3.menu', async () => {
+        const selection = await vscode.window.showQuickPick(
+            [
+                { label: 'Restart GrandM 3 extension'},
+                { label: 'Select GrandMa 3 API version'}
+            ],
+            { 
+                title: 'GrandMa 3 API Menu',
+                placeHolder: 'Choose an action'
+            }
+        );
+    
+        if (!selection) return;
+    
+        if (selection.label === 'Restart GrandM 3 extension') {
+            const currentApiVersion = getCurrentApiVersion(context);
+            configureWorkspace(context, currentApiVersion);
+            loadApiFiles(context, currentApiVersion);
+            restartLuaServer();
+            vscode.window.showInformationMessage(`GrandMa 3 extension restarted`);
+        } else if (selection.label === 'Select GrandMa 3 API version') {
+            await showApiVersionQuickPick(context, apiVersionStatusBarItem);
+        }
+    });
+    context.subscriptions.push(changeApiVersionCommand);
+}
+
 function createApiVersionStatusBarItem() {
     const statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 100);
-    statusBarItem.command = 'grandMa3.changeApiVersion';
+    statusBarItem.command = 'grandMa3.menu';
     statusBarItem.show();
     return statusBarItem;
 }
@@ -39,6 +65,7 @@ function getCurrentApiVersion(context) {
     const availableVersions = getAvailableApiVersions(context);
     
     const configuredVersion = configuration.get(API_VERSION_CONFIG_KEY);
+
     return availableVersions.includes(configuredVersion) 
         ? configuredVersion 
         : availableVersions[0];
