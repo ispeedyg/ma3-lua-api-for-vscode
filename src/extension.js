@@ -184,6 +184,8 @@ async function importDummyFunctions(context, version){
     await luaConfig.update('workspace.library', [
         context.asAbsolutePath(path.join('resources', version))
     ], vscode.ConfigurationTarget.Workspace);
+
+    await luaConfig.update('diagnostics.disable', ['undefined-field'], vscode.ConfigurationTarget.Workspace);
 }
 
 async function addFunctionNamesToCSpell(context, version) {
