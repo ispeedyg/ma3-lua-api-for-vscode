@@ -583,7 +583,7 @@ function NeedShowSave()
 end
 
 ---@param objectListCommand string
----@param optionsTable table
+---@param optionsTable? table @Optional
 ---@return table objectList
 function ObjectList(objectListCommand, optionsTable)
     return {}

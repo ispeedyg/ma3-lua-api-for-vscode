@@ -46,7 +46,7 @@ function Handle:Export(filePath, fileName)
 end
 
 ---@param propertyName string
----@param roleInteger integer
+---@param roleInteger? integer @Optional
 ---@return string property
 function Handle:Get(propertyName, roleInteger)
     return ""

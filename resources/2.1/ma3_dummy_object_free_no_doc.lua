@@ -40,12 +40,12 @@ function FindBestDMXPatchAddr(patch, startingAddress, footprint)
     return 0
 end
 
----@param handle? Handle
+---@param handle? Handle @Optional
 function FindBestFocus(handle)
 end
 
----@param backwards? boolean @default: false
----@param reason? integer @Focus::Reason, default: UserTabKey
+---@param backwards? boolean @Optional @default: false
+---@param reason? integer @Optional @Focus::Reason, default: UserTabKey
 function FindNextFocus(backwards, reason)
 end
 
@@ -97,11 +97,11 @@ end
 
 ---@param displayIndex integer
 ---@param type string @'press', 'char', 'release'
----@param charOrKeycode? string
----@param shift? boolean
----@param ctrl? boolean
----@param alt? boolean
----@param numlock? boolean
+---@param charOrKeycode? string @Optional
+---@param shift? boolean @Optional
+---@param ctrl? boolean @Optional
+---@param alt? boolean @Optional
+---@param numlock? boolean @Optional
 function Keyboard(displayIndex, type, charOrKeycode, shift, ctrl, alt, numlock)
 end
 
@@ -112,7 +112,7 @@ end
 ---@param displayIndex integer
 ---@param type string @'press', 'move', 'release'
 ---@param buttonOrAbsX string|integer @'Left', 'Middle', 'Right' for 'press'/'release' or absolute X coordinate
----@param absY? integer
+---@param absY? integer @Optional
 function Mouse(displayIndex, type, buttonOrAbsX, absY)
 end
 
@@ -122,7 +122,7 @@ function OverallDeviceCertificate()
     return Handle:new()
 end
 
----@param pluginName? string
+---@param pluginName? string @Optional
 ---@return Handle pluginPreferences
 function PluginVars(pluginName)
     return Handle:new()
@@ -135,7 +135,7 @@ function PopupInput(options)
 end
 
 ---@param handle Handle
----@param changeLevelThreshold? integer
+---@param changeLevelThreshold? integer @Optional
 ---@return boolean
 function PrepareWaitObjectChange(handle, changeLevelThreshold)
     return true
@@ -234,14 +234,14 @@ end
 function Touch(displayIndex, type, touchId, absX, absY)
 end
 
----@param secondsToWait? number
+---@param secondsToWait? number @Optional
 ---@return Handle|nil modalHandle
 function WaitModal(secondsToWait)
     return nil
 end
 
 ---@param handle Handle @handle to UIObject
----@param secondsToWait? number
+---@param secondsToWait? number @Optional
 ---@return boolean|nil @true on success, nil on timeout
 function WaitObjectDelete(handle, secondsToWait)
     return true
