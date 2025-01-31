@@ -1,5 +1,8 @@
 # Change Log
 
+## 1.1.0 — January 31, 2025
+- Add Enums to the dummy files
+
 ## 1.0.2 — January 30, 2025
 - Add configuration to disable 'undefined-field' diagnostics in workspace
 

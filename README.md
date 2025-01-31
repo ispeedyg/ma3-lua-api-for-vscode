@@ -11,6 +11,11 @@ When typing the extension provide functions related to the selected API version.
 When you select a suggested function, the extension add automatically functions parameters.
 ![autocompletion](images/autocompletion.gif)
 
+Autocomplete are available for Enums and keys:
+
+![autocomplete-enums](images/autocomplete-enums.png)
+![autocomplete-keys](images/autocomplete-keys.png)
+
 
 ### Documentation:
 The extension provide documentation and examples with a mouse over popup.
@@ -40,11 +45,23 @@ This is an open source project, feel free to contribute by making pull requests.
 ### File organization
 All the extension data is in the resources folder, that folder contain a folder for each Ma3 version, each folder contain:
 
-- [ma3_dummy_api.lua](resources/2.1/ma3_documented_api.lua) : to helps the Lua Language Server to know all the functions 
-- [ma3_object_api.json](resources/2.1/ma3_object_api.json) : contain all object api documentation and autocompletion
-- [ma3_object_free_api.json](resources/2.1/ma3_object_free_api.json) : contain all object free api documentation and autocompletion
+- Dummy lua files to helps the Lua Language Server to know all the functions:
+  - Function documented in the manual
+    - [ma3_dummy_object_free.lua](resources/2.1/ma3_dummy_object_free.lua) : object free functions
+    - [ma3_dummy_object.lua](resources/2.1/ma3_dummy_object.lua) : object functions
+  - Function not documented in the manual but returned by the [HelpLua](https://help.malighting.com/grandMA3/2.1/HTML/keyword_helplua.html) command
+    - [ma3_dummy_object_free_no_doc.lua](resources/2.1/ma3_dummy_object_free_no_doc.lua) : object free functions 
+    - [ma3_dummy_object_no_doc.lua](resources/2.1/ma3_dummy_object_no_doc.lua) : object functions 
+  - [ma3_enums.lua](resources/2.1/ma3_enums.lua) : Enums list returned by this [lua script](utils/GenerateEnumsFile/exportEnumList.lua) and converted to lua enum with this [Python script](utils/GenerateEnumsFile/GenerateLuaEnums.py)
+- Json files that contain all object api documentation and autocompletion:
+  - Function documented in the manual
+    - [ma3_object_free.json](resources/2.1/ma3_object_free.json) : object free functions
+    - [ma3_object.json](resources/2.1/ma3_object.json) : object functions
+  - For not documented functions
+    - [ma3_object_free_no_doc.json](resources/2.1/ma3_object_free_no_doc.json) : object free functions
+    - [ma3_object_no_doc.json](resources/2.1/ma3_object_no_doc.json) : object functions
 
-### To update or complete the API documentation:
+### To update or complete the documented files:
 
 This image explain how to fill the json files according to the [Ma help pages](https://help.malighting.com/grandMA3/2.1/HTML/lua_objectfree.html) that corresponding to the version.
 ![json filling](images/json_filling.png)
