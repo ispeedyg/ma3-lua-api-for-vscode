@@ -1,0 +1,15 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"Lua.workspace.library": [
+			"/Users/speedy/.vscode/extensions/carrot-industries.ma3-lua-api-1.1.1/resources/2.2"
+		],
+		"Lua.diagnostics.disable": [
+			"undefined-field"
+		]
+	}
+}
