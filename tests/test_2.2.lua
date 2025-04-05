@@ -1,3 +1,8 @@
+--# selene: allow(unscoped_variables)
+--# selene: allow(undefined_variable)
+--# selene: allow(unused_variable)
+
+
 local function test()
 
     -- variables declaration
@@ -12,7 +17,7 @@ local function test()
     local basePath, pathContentType, rtChannelIndex, presetHandle, returnPhaserData
     local extract, sampleType, screenHandle, patchIndex, attributeIndex, positionTable 
     local variableHandle, varName, functionName, objectHandle, pluginHandle
-    local passedObjectHandle, index, position, duration, title, text, screen, text
+    local passedObjectHandle, index, position, duration, title, text, screen
     local handleTarget, fixtureIndex, returnHandles, shortKeyword,progressBarHandle, value
     local handleInteger, derivedClassName, baseClassName, objectList, optionsTable
     local moduleHandle, progress, rangeTart, rangeEnd, handleString, textGuide, xPosition

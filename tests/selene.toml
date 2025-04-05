@@ -1,0 +1,12 @@
+
+
+std = "lua51"
+--#selene: allow(unscoped_variables)
+--# selene: allow(undefined_variable)
+--# selene: allow(unused_variable)
+--# selene: allow(unused-local)
+
+
+
+
+
