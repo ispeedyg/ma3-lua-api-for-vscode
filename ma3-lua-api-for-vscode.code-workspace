@@ -2,6 +2,9 @@
 	"folders": [
 		{
 			"path": "."
+		},
+		{
+			"path": "../../../../../Volumes/NO NAME/grandMA3/gma3_library/datapools/plugins"
 		}
 	],
 	"settings": {

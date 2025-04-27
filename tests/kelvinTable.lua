@@ -1,2 +1,164 @@
+function Main()
+   local kelvin_table ={
+    [1000]  =  "(255, 56, 0)",
+    [1100]  =  "(255, 71, 0)",
+    [1200]  =  "(255, 83, 0)",
+    [1300]  =  "(255, 93, 0)",
+    [1400]  =  "(255, 101, 0)",
+    [1500]  =  "(255, 109, 0)",
+    [1600]  =  "(255, 115, 0)",
+    [1700]  =  "(255, 121, 0)",
+    [1800]  =  "(255, 126, 0)",
+    [1900]  =  "(255, 131, 0)",
+    [2000]  =  "(255, 138, 18)",
+    [2100]  =  "(255, 142, 33)",
+    [2200]  =  "(255, 147, 44)",
+    [2300]  =  "(255, 152, 54)",
+    [2400]  =  "(255, 157, 63)",
+    [2500]  =  "(255, 161, 72)",
+    [2600]  =  "(255, 165, 79)",
+    [2700]  =  "(255, 169, 87)",
+    [2800]  =  "(255, 173, 94)",
+    [2900]  =  "(255, 177, 101)",
+    [3000]  =  "(255, 180, 107)",
+    [3100]  =  "(255, 184, 114)",
+    [3200]  =  "(255, 187, 120)",
+    [3300]  =  "(255, 190, 126)",
+    [3400]  =  "(255, 193, 132)",
+    [3500]  =  "(255, 196, 137)",
+    [3600]  =  "(255, 199, 143)",
+    [3700]  =  "(255, 201, 148)",
+    [3800]  =  "(255, 204, 153)",
+    [3900]  =  "(255, 206, 159)",
+    [4000]  =  "(255, 209, 163)",
+    [4100]  =  "(255, 211, 168)",
+    [4200]  =  "(255, 213, 173)",
+    [4300]  =  "(255, 215, 177)",
+    [4400]  =  "(255, 217, 182)",
+    [4500]  =  "(255, 219, 186)",
+    [4600]  =  "(255, 221, 190)",
+    [4700]  =  "(255, 223, 194)",
+    [4800]  =  "(255, 225, 198)",
+    [4900]  =  "(255, 227, 202)",
+    [5000]  =  "(255, 228, 206)",
+    [5100]  =  "(255, 230, 210)",
+    [5200]  =  "(255, 232, 213)",
+    [5300]  =  "(255, 233, 217)",
+    [5400]  =  "(255, 235, 220)",
+    [5500]  =  "(255, 236, 224)",
+    [5600]  =  "(255, 238, 227)",
+    [5700]  =  "(255, 239, 230)",
+    [5800]  =  "(255, 240, 233)",
+    [5900]  =  "(255, 242, 236)",
+    [6000]  =  "(255, 243, 239)",
+    [6100]  =  "(255, 244, 242)",
+    [6200]  =  "(255, 245, 245)",
+    [6300]  =  "(255, 246, 247)",
+    [6400]  =  "(255, 248, 251)",
+    [6500]  =  "(255, 249, 253)",
+    [6600]  =  "(254, 249, 255)",
+    [6700]  =  "(252, 247, 255)",
+    [6800]  =  "(249, 246, 255)",
+    [6900]  =  "(247, 245, 255)",
+    [7000]  =  "(245, 243, 255)",
+    [7100]  =  "(243, 242, 255)",
+    [7200]  =  "(240, 241, 255)",
+    [7300]  =  "(239, 240, 255)",
+    [7400]  =  "(237, 239, 255)",
+    [7500]  =  "(235, 238, 255)",
+    [7600]  =  "(233, 237, 255)",
+    [7700]  =  "(231, 236, 255)",
+    [7800]  =  "(230, 235, 255)",
+    [7900]  =  "(228, 234, 255)",
+    [8000]  =  "(227, 233, 255)",
+    [8100]  =  "(225, 232, 255)",
+    [8200]  =  "(224, 231, 255)",
+    [8300]  =  "(222, 230, 255)",
+    [8400]  =  "(221, 230, 255)",
+    [8500]  =  "(220, 229, 255)",
+    [8600]  =  "(218, 229, 255)",
+    [8700]  =  "(217, 227, 255)",
+    [8800]  =  "(216, 227, 255)",
+    [8900]  =  "(215, 226, 255)",
+    [9000]  =  "(214, 225, 255)",
+    [9100]  =  "(212, 225, 255)",
+    [9200]  =  "(211, 224, 255)",
+    [9300]  =  "(210, 223, 255)",
+    [9400]  =  "(209, 223, 255)",
+    [9500]  =  "(208, 222, 255)",
+    [9600]  =  "(207, 221, 255)",
+    [9700]  =  "(207, 221, 255)",
+    [9800]  =  "(206, 220, 255)",
+    [9900]  =  "(205, 220, 255)",
+    [10000]  =  "(207, 218, 255)",
+    [10100]  =  "(207, 218, 255)",
+    [10200]  =  "(206, 217, 255)",
+    [10300]  =  "(205, 217, 255)",
+    [10400]  =  "(204, 216, 255)",
+    [10500]  =  "(204, 216, 255)",
+    [10600]  =  "(203, 215, 255)",
+    [10700]  =  "(202, 215, 255)",
+    [10800]  =  "(202, 214, 255)",
+    [10900]  =  "(201, 214, 255)",
+    [11000]  =  "(200, 213, 255)",
+    [11100]  =  "(200, 213, 255)",
+    [11200]  =  "(199, 212, 255)",
+    [11300]  =  "(198, 212, 255)",
+    [11400]  =  "(198, 212, 255)",
+    [11500]  =  "(197, 211, 255)",
+    [11600]  =  "(197, 211, 255)",
+    [11700]  =  "(197, 210, 255)",
+    [11800]  =  "(196, 210, 255)",
+    [11900]  =  "(195, 210, 255)",
+    [12000]  =  "(195, 209, 255)",
+    }
 
-local function v0()local v1="Color Temperature in Kelvin";local v2=TextInput(v1);Printf("Kelvin: %s",v2);v2=tonumber(v2);if (type(v2)=="number") then local v5=877 -(282 + 595) ;local v6;local v7;local v8;local v9;while true do if (v5==(1640 -(1523 + 114))) then Cmd('Attribute "ColorRGB_C" At Decimal8 '   .. tostring((230 + 25) -v7 ) );Cmd('Attribute "ColorRGB_M" At Decimal8 '   .. tostring((363 -108) -v8 ) );Cmd('Attribute "ColorRGB_Y" At Decimal8 '   .. tostring((1320 -(68 + 997)) -v9 ) );break;end if (v5==(1271 -(226 + 1044))) then v7=correct_dmx_color_values(v7);v8=correct_dmx_color_values(v8);v9=correct_dmx_color_values(v9);v5=2;end if (v5==(0 -0)) then v6=v2/(217 -(32 + 85)) ;v7,v8,v9=nil;if (v6<=(65 + 1)) then local v10=0 + 0 ;while true do if (1==v10) then v8=((1056.4708025861 -(892 + 65)) * math.log(v8)) -161.1195681661 ;if (v6<=(44 -25)) then v9=0 -0 ;else local v11=0 -0 ;while true do if (v11==0) then v9=v6-(360 -(87 + 263)) ;v9=((318.5177312231 -(67 + 113)) * math.log(v9)) -305.0447927307 ;break;end end end break;end if (v10==(0 + 0)) then v7=626 -371 ;v8=v6;v10=1;end end else v7=v6-(45 + 15) ;v7=(1307.698727446 -978) * (v7^ -(952.1332047592 -(802 + 150))) ;v8=v6-60 ;v8=288.1221695283 * (v8^ -0.0755148492) ;v9=686 -431 ;end v5=1 -0 ;end if (v5==2) then Cmd('Attribute "ColorRGB_R" At Decimal8 '   .. tostring(v7) );Cmd('Attribute "ColorRGB_G" At Decimal8 '   .. tostring(v8) );Cmd('Attribute "ColorRGB_B" At Decimal8 '   .. tostring(v9) );v5=3 + 0 ;end end end end function correct_dmx_color_values(v3)local v4=997 -(915 + 82) ;while true do if (v4==(0 -0)) then v3=math.floor(v3 + 0.5 );if (v3<(0 + 0)) then v3=0 -0 ;end v4=1;end if (v4==(1188 -(1069 + 118))) then if (v3>(578 -323)) then v3=557 -302 ;end return v3;end end end return v0;
+
+
+    function split_string(inputstr, sep)
+        if sep == nil then
+            sep = "%s"
+        end
+        local t = {}
+            for part in string.gmatch(inputstr, "([^" .. sep .. "]+)") do
+                table.insert(t, part)
+            end
+        return t
+    end
+
+    -- To round to a specific decimal place:
+    function round(num, decimalPlaces)
+        local mult = 10^(decimalPlaces or 0)
+        return math.floor(num * mult + 0.5) / mult
+    end
+
+    -- local kelvin = io.read("*n") -- this was for testing in VSCODE
+    local msg = "Color Temperatur in 100ths between 1000 and 12000: "
+    local kel = TextInput(msg)
+    local kelvin = tonumber(kel)
+    if type(kelvin) == "number" then
+        Echo(kelvin)
+        for k, v in pairs(kelvin_table) do
+            if k == kelvin then
+                local result = split_string(v, "(,)")
+                Answer = {}
+                    for x, value in ipairs(result) do
+                        table.insert(Answer, x, value)
+                    end
+            end
+        end
+        if Answer == nil then return Printf("Enter a valid hundreths between 1000 and 12000") end
+        if Answer ~= nil then
+            for i = 1, 3 do
+                local x = Answer[i]/255
+                x = round(x, 3)
+                Echo(x)
+                if i == 1 then Cmd('Attribute "ColorRGB_R" At Decimal8'..tostring(x))
+                elseif i == 2 then Cmd('Attribute "ColorRGB_G" At Decimal8'..tostring(x))
+                elseif i == 3 then Cmd('Attribute "ColorRGB_B" At Decimal8'..tostring(x))
+                end
+            end
+        end
+    end
+end
+return Main
