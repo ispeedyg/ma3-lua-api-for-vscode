@@ -9,7 +9,7 @@
 	],
 	"settings": {
 		"Lua.workspace.library": [
-			"/Users/speedy/.vscode/extensions/carrot-industries.ma3-lua-api-1.3.4/resources/2.2"
+			"/Users/speedy/.vscode/extensions/carrot-industries.ma3-lua-api-1.3.5/resources/2.2"
 		],
 		"Lua.diagnostics.disable": [
 			"undefined-field"

@@ -1,4 +1,0 @@
--- if i == 1 then Cmd('Attribute "ColorRGB_R" At Decimal8'..tostring(x))
-        -- elseif i == 2 then Cmd('Attribute "ColorRGB_G" At Decimal8'..tostring(x))
-        -- elseif i == 3 then Cmd('Attribute "ColorRGB_B" At Decimal8'..tostring(x))
-        -- end
